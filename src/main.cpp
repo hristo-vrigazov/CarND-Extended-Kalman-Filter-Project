@@ -13,6 +13,8 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::vector;
 
+#include "tools.h"
+
 void check_arguments(int argc, char* argv[]) {
   string usage_instructions = "Usage instructions: ";
   usage_instructions += argv[0];
@@ -49,7 +51,13 @@ void check_files(ifstream& in_file, string& in_name,
   }
 }
 
-int main(int argc, char* argv[]) {
+int old_main(int argc, char* argv[]);
+
+int main(int argc, char * argv[]) {
+   return old_main(argc, argv);
+}
+
+int old_main(int argc, char* argv[]) {
 
   check_arguments(argc, argv);
 
