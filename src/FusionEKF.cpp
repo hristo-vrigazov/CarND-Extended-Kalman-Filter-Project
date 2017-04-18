@@ -92,23 +92,30 @@ void FusionEKF::update(const MeasurementPackage &measurement_pack) {
    */
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-	  double px = ekf_.x_(0);
-	  double py = ekf_.x_(1);
-	  double c1 = px*px + py*py;
-	  if (fabs(c1) < 10e-6) {
+    updateRadar(measurement_pack);
+  } else {
+    updateLaser(measurement_pack);
+  }
+}
+
+void FusionEKF::updateLaser(const MeasurementPackage &measurement_pack) {
+  ekf_.R_ = R_laser_;
+  ekf_.H_ = H_laser_;
+  ekf_.Update(measurement_pack.raw_measurements_);
+}
+
+void FusionEKF::updateRadar(const MeasurementPackage &measurement_pack) {
+  double px = ekf_.x_(0);
+  double py = ekf_.x_(1);
+  double c1 = px*px + py*py;
+  if (fabs(c1) < 10e-6) {
 		  ekf_.x_(0) = 0.01;
 		  ekf_.x_(1) = 0.01;
 	  }
 
-    ekf_.R_ = R_radar_;
-    ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
-    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
-  } else {
-    // Laser updates
-    ekf_.R_ = R_laser_;
-    ekf_.H_ = H_laser_;
-    ekf_.Update(measurement_pack.raw_measurements_);
-  }
+  ekf_.R_ = R_radar_;
+  ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
+  ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 }
 
 void FusionEKF::predict(const MeasurementPackage &measurement_pack) {//compute the time elapsed between the current and previous measurements
