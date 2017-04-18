@@ -13,8 +13,6 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::vector;
 
-#include "tools.h"
-
 void check_arguments(int argc, char* argv[]) {
   string usage_instructions = "Usage instructions: ";
   usage_instructions += argv[0];
@@ -51,13 +49,7 @@ void check_files(ifstream& in_file, string& in_name,
   }
 }
 
-int old_main(int argc, char* argv[]);
-
-int main(int argc, char * argv[]) {
-   return old_main(argc, argv);
-}
-
-int old_main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
   check_arguments(argc, argv);
 
@@ -142,6 +134,7 @@ int old_main(int argc, char* argv[]) {
   //Call the EKF-based fusion
   size_t N = measurement_pack_list.size();
   for (size_t k = 0; k < N; ++k) {
+    cout << "k=" << k <<endl;
     // start filtering from the second frame (the speed is unknown in the first
     // frame)
     fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
@@ -159,8 +152,8 @@ int old_main(int argc, char* argv[]) {
       out_file_ << measurement_pack_list[k].raw_measurements_(1) << "\t";
     } else if (measurement_pack_list[k].sensor_type_ == MeasurementPackage::RADAR) {
       // output the estimation in the cartesian coordinates
-      float ro = measurement_pack_list[k].raw_measurements_(0);
-      float phi = measurement_pack_list[k].raw_measurements_(1);
+      double ro = measurement_pack_list[k].raw_measurements_(0);
+      double phi = measurement_pack_list[k].raw_measurements_(1);
       out_file_ << ro * cos(phi) << "\t"; // p1_meas
       out_file_ << ro * sin(phi) << "\t"; // ps_meas
     }
