@@ -20,7 +20,6 @@ FusionEKF::FusionEKF() {
   R_laser_ = MatrixXd(2, 2);
   R_radar_ = MatrixXd(3, 3);
   H_laser_ = MatrixXd(2, 4);
-  Hj_ = MatrixXd(3, 4);
 
   //measurement covariance matrix - laser
   R_laser_ << 0.0225, 0,
@@ -107,11 +106,11 @@ void FusionEKF::updateLaser(const MeasurementPackage &measurement_pack) {
 void FusionEKF::updateRadar(const MeasurementPackage &measurement_pack) {
   double px = ekf_.x_(0);
   double py = ekf_.x_(1);
-  double c1 = px*px + py*py;
+  double c1 = px * px + py * py;
   if (fabs(c1) < 10e-6) {
-		  ekf_.x_(0) = 0.01;
-		  ekf_.x_(1) = 0.01;
-	  }
+    ekf_.x_(0) = 0.01;
+    ekf_.x_(1) = 0.01;
+  }
 
   ekf_.R_ = R_radar_;
   ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
@@ -133,8 +132,8 @@ void FusionEKF::predict(const MeasurementPackage &measurement_pack) {//compute t
   previous_timestamp_ = measurement_pack.timestamp_;
 
   double dt_2 = dt * dt;
-  double dt_3 = dt * dt * dt;
-  double dt_4 = dt * dt * dt * dt;
+  double dt_3 = dt_2 * dt;
+  double dt_4 = dt_3 * dt;
 
   //Modify the F matrix so that the time is integrated
   ekf_.F_(0, 2) = dt;
