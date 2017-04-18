@@ -56,6 +56,10 @@ private:
   void updateRadar(const MeasurementPackage &measurement_pack);
 
   void updateLaser(const MeasurementPackage &measurement_pack);
+
+  void initializeRadar(const MeasurementPackage &measurement_pack);
+
+  void initializeLaser(const MeasurementPackage &measurement_pack);
 };
 
 #endif /* FusionEKF_H_ */

@@ -152,21 +152,23 @@ void FusionEKF::initialize(const MeasurementPackage &measurement_pack) {
   ekf_.x_ = VectorXd(4);
 
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    /**
-    Convert radar from polar to cartesian coordinates and initialize state.
-    */
-    double ro = measurement_pack.raw_measurements_[0];
-    double phi = measurement_pack.raw_measurements_[1];
-    double x = ro * cos(phi);
-    double y = ro * sin(phi);
-    ekf_.x_ << x, y, 0, 0;
+    initializeRadar(measurement_pack);
   } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
-    /**
-    Initialize state.
-    */
-    double x = measurement_pack.raw_measurements_[0];
-    double y = measurement_pack.raw_measurements_[1];
-    ekf_.x_ << x, y, 0, 0;
+    initializeLaser(measurement_pack);
   }
   previous_timestamp_ = measurement_pack.timestamp_;
+}
+
+void FusionEKF::initializeLaser(const MeasurementPackage &measurement_pack) {
+  double x = measurement_pack.raw_measurements_[0];
+  double y = measurement_pack.raw_measurements_[1];
+  ekf_.x_ << x, y, 0, 0;
+}
+
+void FusionEKF::initializeRadar(const MeasurementPackage &measurement_pack) {
+  double ro = measurement_pack.raw_measurements_[0];
+  double phi = measurement_pack.raw_measurements_[1];
+  double x = ro * cos(phi);
+  double y = ro * sin(phi);
+  ekf_.x_ << x, y, 0, 0;
 }
